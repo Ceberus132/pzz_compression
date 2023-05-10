@@ -1,4 +1,4 @@
-# Decompressor for files with pzz compression
+# (De)compressor & (un)packer for files with pzz compression
 
 (Monster Hunter, GioGio’s Bizarre Adventure / JoJo no Kimyō na Bōken: Ōgon no Kaze, many Capcom Games, etc.)
 
