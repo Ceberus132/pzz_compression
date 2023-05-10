@@ -1,4 +1,4 @@
-__version__ = "0.1"
+__version__ = "0.2"
 __author__ = "Ceberus132"
 __description__ = "Decompressor for files with pzz compression (Monster Hunter, GioGio, etc.)"
 __license__ = "MIT"
