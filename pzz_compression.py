@@ -48,7 +48,22 @@ def decompress(file_data):
 
 
 if __name__ == '__main__':
+    batch_yes = {"y", "yes", "Y", "Yes", "YES"}
+    batch_no = {"n", "no", "N", "No", "NO"}
     while True:
+        # Ask the user if he wants to batch process
+        batch_convert = input("Do you want to batch process multiple files at once? y/n: ")
+        path_type = "file"
+        if batch_convert in batch_yes:
+            path_type = "folder"
+            batch_convert = True
+        elif batch_convert in batch_no:
+            path_type = "file"
+            batch_convert = False
+        else:
+            print("--------------------\nPlease enter a valid option!\n--------------------")
+            continue
+
         # Get the input and output paths from the user
         input_path = input(f"Please enter your full file path: ")
         output_path = input(f"Please enter your full output path: ")
@@ -59,14 +74,27 @@ if __name__ == '__main__':
             input_path = input_path.replace("\"", "")
             output_path = output_path.replace("\"", "")
 
-        # Check if the input path is a file and if the output path has a parent directory and a file suffix
-        if (not Path(input_path).is_file()) or not (Path(output_path).parent.is_dir() and Path(output_path).suffix):
-            print(f"--------------------\nInput path: {input_path} or \nOutput path: {output_path} are not a valid file path!\nPlease enter a valid file path!\n--------------------")
+        # Check if the input path is a folder if batch_conversion is enabled or if it is a file
+        if (batch_convert and not Path(input_path).is_dir()) or (not batch_convert and not Path(input_path).is_file()):
+            print(
+                f"--------------------\nInput path: {input_path} is not a valid {path_type} path!\nPlease enter a valid {path_type} path!\n--------------------")
+            continue
+        # Check if the output path is a folder if batch_conversion is enabled or has a parent directory and a file suffix
+        elif (batch_convert and not Path(output_path).is_dir()) or (not batch_convert and not (Path(output_path).parent.is_dir() and Path(output_path).suffix)):
+            print(
+                f"--------------------\nOutput path: {output_path} is not a valid {path_type} path!\nPlease enter a valid {path_type} path!\n--------------------")
             continue
 
         # Start the decompression
-        print(f"--------------------\nDecompression started!")
-        Path(output_path).write_bytes(decompress(Path(input_path).read_bytes()))
-        print(f"Decompression finished!\n--------------------")
+        if batch_convert:
+            print(f"--------------------\nBatch decompression starting")
+            for file in Path(input_path).glob("*"):
+                (Path(output_path) / file.name).with_suffix(file.suffix).write_bytes(decompress(Path(file).read_bytes()))
+            print(f"Decompression finished!\n--------------------")
+
+        else:
+            print(f"--------------------\nDecompression starting")
+            Path(output_path).write_bytes(decompress(Path(input_path).read_bytes()))
+            print(f"Decompression finished!\n--------------------")
 
         break
